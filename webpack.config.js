@@ -44,6 +44,7 @@ const common = {
     postcss: [ autoprefixer({ browsers: ['>0.5%','last 2 versions'] }) ],
 
     resolve: {
+        root : path.join(__dirname, 'src'),
         extensions: ['', '.js', '.less'],
         alias: {
             
@@ -72,8 +73,18 @@ if( ENV === 'development' || !ENV){
             loaders : [
                 {
                     test : /\.css$/,
-                    //exclude : /node_modules/,
-                    loader : 'style!css!postcss'
+                    exclude : /node_modules/,
+                    loader : 'style!css?modules!postcss'
+                },
+                {
+                    test : /\.less$/,
+                    exclude : /node_modules/,
+                    loader : 'style!css?modules!postcss!less'
+                },
+                {
+                    test : /\.css$/,
+                    include : /node_modules/,
+                    loader : 'style!css'
                 }
             ]
         },
@@ -108,8 +119,8 @@ if( ENV === 'production' ){
             loaders : [
                 {
                     test : /\.css$/,
-                    //exclude : /node_modules/,
-                    loader: ExtractTextPlugin.extract('style', 'css!postcss')
+                    exclude : /node_modules/,
+                    loader: ExtractTextPlugin.extract('style', 'css?modules!postcss')
                 }
             ]
         },
