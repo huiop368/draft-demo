@@ -52,6 +52,11 @@ export default class RichStyle extends Component {
           )
     }
 
+    handleTab = (e) => {
+        const maxDepth = 4
+        this.handleChange(RichUtils.onTab(e, this.state.editorState, maxDepth))
+    }
+
     render() {
         const { editorState } = this.state
 
@@ -73,6 +78,7 @@ export default class RichStyle extends Component {
                      blockStyleFn={getBlockStyle}
                      editorState={this.state.editorState}
                      handleKeyCommand={this.handleKeyCommand}
+                     onTab={this.handleTab}
                      onChange={this.handleChange} />
                 </div>
             </div>

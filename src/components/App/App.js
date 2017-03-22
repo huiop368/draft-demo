@@ -3,6 +3,7 @@ import ReactDOM             from 'react-dom'
 import classnames           from 'classnames'
 import PlainText            from 'components/Example/PlainText'
 import RichStyle            from 'components/Example/RichStyle'
+import Decorator            from 'components/Example/Decorator'
 
 import 'draft-js/dist/Draft.css'
 import classes from './App.less'
@@ -25,8 +26,8 @@ export default class App extends Component {
     
     render (){
         const { index } = this.state
-        const rets = [<PlainText />, <RichStyle />]
-        const btns = ['PlainText', 'RichStyle']
+        const rets = [<PlainText />, <RichStyle />, <Decorator />]
+        const btns = ['PlainText', 'RichStyle', 'Decorator']
 
         return (
             <div className="container">
