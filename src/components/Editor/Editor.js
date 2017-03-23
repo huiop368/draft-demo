@@ -1,10 +1,23 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-import {Editor, EditorState} from 'draft-js'
+import React, { Component, PropTypes } from 'react'
+import ReactDOM                 from 'react-dom'
+import classnames               from 'classnames'
+import {Editor, EditorState}    from 'draft-js'
 
 import classes from './Editor.css'
 
 export default class MyEditor extends Component {
+
+    static propTypes = {
+        placeholder : PropTypes.string,
+        spellCheck  : PropTypes.bool,
+        readOnly    : PropTypes.bool,
+    };
+
+    static defaultProps = {
+        placeholder : 'Tell your story...',
+        spellCheck  : true,
+        readOnly    : false,
+    };
     
     constructor(props) {
         super(props)
@@ -22,22 +35,21 @@ export default class MyEditor extends Component {
         this.editor.focus()
     }
 
-    handleLog = () => {
-        console.log(this.state.editorState.toJS())
-    }
-
     render() {
+        const { placeholder, spellCheck, readOnly } = this.props
+
         return (
             <div className={classes.area}>
                 <div className={classes.editor_wrap} onClick={this.handleFocus}>
                     <Editor
-                     placeholder="Enter some txt..."
+                     placeholder={placeholder}
+                     spellCheck={!readOnly && spellCheck}
+                     readOnly={readOnly}
                      ref={node => this.editor = node}
                      editorState={this.state.editorState}
                      onChange={this.handleChange} />
                 </div>
-
-                <button onClick={this.handleLog}>Log State</button>
+                
             </div>
         )
     }
