@@ -5,6 +5,7 @@ import PlainText            from 'components/Example/PlainText'
 import RichStyle            from 'components/Example/RichStyle'
 import Decorator            from 'components/Example/Decorator'
 import BeforeInput          from 'components/Example/BeforeInput'
+import MyEditorEX           from 'components/Example/MyEditor'
 
 import 'draft-js/dist/Draft.css'
 import classes from './App.less'
@@ -15,7 +16,7 @@ export default class App extends Component {
         super(props)
 
         this.state = {
-            index : 0
+            index : 4
         }
     }
 
@@ -27,8 +28,8 @@ export default class App extends Component {
     
     render (){
         const { index } = this.state
-        const rets = [<PlainText />, <RichStyle />, <Decorator />, <BeforeInput />]
-        const btns = ['PlainText', 'RichStyle', 'Decorator', 'BeforeInput']
+        const rets = [<PlainText />, <RichStyle />, <Decorator />, <BeforeInput />, <MyEditorEX />]
+        const btns = ['PlainText', 'RichStyle', 'Decorator', 'BeforeInput', 'MyEditor']
 
         return (
             <div className="container">
