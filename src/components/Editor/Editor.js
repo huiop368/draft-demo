@@ -3,9 +3,12 @@ import ReactDOM                 from 'react-dom'
 import classnames               from 'classnames'
 import { Editor, RichUtils }    from 'draft-js'
 
-import { keyBindingFn, customStyleMap } from './utils'
+import {
+    keyBindingFn, customStyleMap, blockRenderMap,
+    blockRendererFn, blockStyleFn, constants
+} from './utils'
 
-console.log(keyBindingFn, customStyleMap)
+console.log(constants)
 
 import classes from './index.less'
 
@@ -17,9 +20,13 @@ export default class MyEditor extends Component {
         readOnly    : PropTypes.bool,
 
         editorState : PropTypes.object.isRequired,
+        customStyleMap: PropTypes.object,
+        blockRenderMap : PropTypes.object,
         onChange    : PropTypes.func.isRequired,
         handleKeyCommand : PropTypes.func,
         keyBindingFn : PropTypes.func,
+        blockRendererFn : PropTypes.func,
+        blockStyleFn : PropTypes.func
     };
 
     static defaultProps = {
@@ -27,7 +34,11 @@ export default class MyEditor extends Component {
         spellCheck  : true,
         readOnly    : false,
         keyBindingFn : keyBindingFn,
-
+        customStyleMap : customStyleMap,
+        blockRenderMap : blockRenderMap,
+        blockRendererFn : blockRendererFn,
+        blockStyleFn : blockStyleFn
+            
         //onChange    : () => {},
         //editorState : ,
         //keyBindingFn : () => {}
@@ -41,6 +52,12 @@ export default class MyEditor extends Component {
     focus = () => {
         this.editor.focus()
     }
+
+    getEditorState = () => {
+        return this.props.editorState
+    }
+
+
 
     handleChange = (editorState) => {
         this.props.onChange(editorState)
@@ -83,7 +100,9 @@ export default class MyEditor extends Component {
     }
 
     render() {
-        const { placeholder, spellCheck, readOnly, editorState, keyBindingFn } = this.props
+        const { placeholder, spellCheck, readOnly, editorState, keyBindingFn, customStyleMap,
+                blockRenderMap, blockRendererFn, blockStyleFn
+              } = this.props
 
         return (
             <div className={classes.editor_root}>
@@ -94,9 +113,29 @@ export default class MyEditor extends Component {
                      readOnly={readOnly}
                      ref={node => this.editor = node}
                      editorState={editorState}
+                     /**
+                      *@custom inline style 'BOLD' : font-weight 类似 
+                      *@custom block style define className
+                      */
+                     customStyleMap={customStyleMap}
+                     blockStyleFn={blockStyleFn}
+
+                     /**
+                      *@custom block render
+                      *@renderMap自定义block key值
+                      *@renderFn 根据key值渲染不同的component
+                      */
+                     blockRenderMap={blockRenderMap}
+                     blockRendererFn={blockRendererFn(this.handleChange, this.getEditorState)}
+                     /**
+                      *@处理key command
+                      *@keyBindingFn定义custom key 别名，handlekeyCommand处理custom别名
+                      */
                      keyBindingFn={keyBindingFn}
-                     onTab={this.handleTab}
                      handleKeyCommand={this.handleKeyCommand}
+
+                     //@list 列表二级缩进
+                     onTab={this.handleTab}
                      onChange={this.handleChange} />
                 </div>
                 

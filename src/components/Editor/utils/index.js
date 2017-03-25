@@ -1,5 +1,14 @@
-// export * from './fns'
-// export * from './maps'
+export {
+    keyBindingFn,
+    blockRendererFn,
+    blockStyleFn
+} from './fns'
 
-export { keyBindingFn } from './fns'
-export { customStyleMap } from './maps'
+export {
+    customStyleMap,
+    blockRenderMap
+} from './maps'
+
+export {
+    constants
+} from './constants'
