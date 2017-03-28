@@ -14,14 +14,14 @@ export default class Decorator extends Component {
               strategy: handleStrategy,
               component: HandleSpan,
             },
-            // {
-            //   strategy: hashtagStrategy,
-            //   component: HashtagSpan,
-            // },
             {
-              strategy: titleStrategy,
-              component: TitleSpan, 
-            }
+              strategy: hashtagStrategy,
+              component: HashtagSpan,
+            },
+            // {
+            //   strategy: titleStrategy,
+            //   component: TitleSpan, 
+            // }
         ])
 
         this.state = {

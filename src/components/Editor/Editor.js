@@ -3,12 +3,13 @@ import ReactDOM                 from 'react-dom'
 import classnames               from 'classnames'
 import { Editor, RichUtils }    from 'draft-js'
 
+import Toolbar                  from './components/toolbar'
 import {
     keyBindingFn, customStyleMap, blockRenderMap,
-    blockRendererFn, blockStyleFn, constants
+    blockRendererFn, blockStyleFn, constants, beforeInput
 } from './utils'
 
-console.log(constants)
+const { Block } = constants
 
 import classes from './index.less'
 
@@ -26,7 +27,8 @@ export default class MyEditor extends Component {
         handleKeyCommand : PropTypes.func,
         keyBindingFn : PropTypes.func,
         blockRendererFn : PropTypes.func,
-        blockStyleFn : PropTypes.func
+        blockStyleFn : PropTypes.func,
+        beforeInput : PropTypes.func
     };
 
     static defaultProps = {
@@ -37,7 +39,8 @@ export default class MyEditor extends Component {
         customStyleMap : customStyleMap,
         blockRenderMap : blockRenderMap,
         blockRendererFn : blockRendererFn,
-        blockStyleFn : blockStyleFn
+        blockStyleFn : blockStyleFn,
+        beforeInput : beforeInput,
             
         //onChange    : () => {},
         //editorState : ,
@@ -57,7 +60,7 @@ export default class MyEditor extends Component {
         return this.props.editorState
     }
 
-
+    // ---------------------------------------------
 
     handleChange = (editorState) => {
         this.props.onChange(editorState)
@@ -70,6 +73,10 @@ export default class MyEditor extends Component {
         if (newEditorState !== editorState) {
           this.handleChange(newEditorState)
         }
+    }
+
+    handleBeforeInput = (str) => {
+        return this.props.beforeInput(this.props.editorState, str, this.handleChange )
     }
 
     handleKeyCommand = (command) => {
@@ -99,6 +106,41 @@ export default class MyEditor extends Component {
         return 'not-handled'
     }
 
+    // ------------------------------------------------
+    handleToggleBlockType = (blockType) => {
+        const {editorState} = this.props
+        const type = RichUtils.getCurrentBlockType(editorState)
+
+        // @TODO 是否需要
+        // if (type.indexOf(`${Block.ATOMIC}:`) === 0) {
+        //   return
+        // }
+
+        this.handleChange(
+          RichUtils.toggleBlockType(
+            editorState,
+            blockType
+          )
+        )
+    }
+
+    handleToggleInlineStyle = (inlineStyle) => {
+        const {editorState} = this.props
+        const type = RichUtils.getCurrentBlockType(editorState)
+
+        //@TODO 是否需要
+        // if (type.indexOf(Block.H1.split('-')[0]) === 0) {
+        //   return
+        // }
+
+        this.handleChange(
+          RichUtils.toggleInlineStyle(
+            editorState,
+            inlineStyle
+          )
+        )
+    }
+
     render() {
         const { placeholder, spellCheck, readOnly, editorState, keyBindingFn, customStyleMap,
                 blockRenderMap, blockRendererFn, blockStyleFn
@@ -106,6 +148,12 @@ export default class MyEditor extends Component {
 
         return (
             <div className={classes.editor_root}>
+
+                <Toolbar
+                 toggleBlockType={this.handleToggleBlockType}
+                 toggleInlineStyle={this.handleToggleInlineStyle}
+                 editorState={editorState} />
+
                 <div className={classes.editor_wrap}>
                     <Editor
                      placeholder={placeholder}
@@ -134,11 +182,16 @@ export default class MyEditor extends Component {
                      keyBindingFn={keyBindingFn}
                      handleKeyCommand={this.handleKeyCommand}
 
+                     /**
+                      *@处理 # -> h1 * -> list
+                      */
+                     handleBeforeInput={this.handleBeforeInput}
+
                      //@list 列表二级缩进
                      onTab={this.handleTab}
                      onChange={this.handleChange} />
                 </div>
-                
+
             </div>
         )
     }

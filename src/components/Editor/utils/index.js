@@ -1,7 +1,8 @@
 export {
     keyBindingFn,
     blockRendererFn,
-    blockStyleFn
+    blockStyleFn,
+    beforeInput
 } from './fns'
 
 export {
