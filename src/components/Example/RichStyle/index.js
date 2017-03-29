@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component, Children } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
-import {Editor, EditorState, RichUtils} from 'draft-js'
+import {Editor, EditorState, RichUtils, CompositeDecorator} from 'draft-js'
 
 import classes from './RichStyle.less'
 
@@ -10,8 +10,14 @@ export default class RichStyle extends Component {
     constructor(props) {
         super(props)
 
+        const compositeDecorator = new CompositeDecorator([
+            {
+                strategy: boldStrategy,
+                component : BoldSpan,
+            }
+        ])
         this.state = {
-            editorState: EditorState.createEmpty()
+            editorState: EditorState.createEmpty(compositeDecorator)
         }
     }
 
@@ -177,4 +183,30 @@ const InlineStyleControls = (props) => {
         )}
       </div>
     )
+}
+
+
+
+const BOLD_REGEX = /\*\*.+\*\*/g
+function boldStrategy(contentBlock, callback, contentState) {
+    findWithRegex(BOLD_REGEX, contentBlock, callback)
+}
+
+function findWithRegex(regex, contentBlock, callback) {
+    const text = contentBlock.getText()
+    let matchArr
+    let start
+    while ((matchArr = regex.exec(text)) !== null) {
+      start = matchArr.index
+      callback(start, start + matchArr[0].length)
+    }
+}
+
+const BoldSpan = (props) => {
+    const el = Children.map(props.children, (child, i) => {
+        return React.cloneElement(child, {
+            style : {fontWeight:'bold'}
+        })
+    })
+    return <span>{el}</span>
 }

@@ -18,6 +18,10 @@ export default class Decorator extends Component {
               strategy: hashtagStrategy,
               component: HashtagSpan,
             },
+            {
+                strategy: boldStrategy,
+                component : BoldSpan,
+            }
             // {
             //   strategy: titleStrategy,
             //   component: TitleSpan, 
@@ -58,6 +62,7 @@ const HANDLE_REGEX = /\@[\w]+/g
 const HASHTAG_REGEX = /\#[\w\u0590-\u05ff]+/g
 //const HEADER_REGEX = /^\#{1,3}\s[\s\w\u0590-\u05ff]*/g
 const HEADER_REGEX = /^\#{1,3}\s.*/g
+const BOLD_REGEX = /\*\*.+\*\*/g
 
 function handleStrategy(contentBlock, callback, contentState) {
     findWithRegex(HANDLE_REGEX, contentBlock, callback)
@@ -65,6 +70,10 @@ function handleStrategy(contentBlock, callback, contentState) {
 
 function hashtagStrategy(contentBlock, callback, contentState) {
     findWithRegex(HASHTAG_REGEX, contentBlock, callback)
+}
+
+function boldStrategy(contentBlock, callback, contentState) {
+    findWithRegex(BOLD_REGEX, contentBlock, callback)
 }
 
 function titleStrategy(contentBlock, callback, contentState){
@@ -79,6 +88,22 @@ function findWithRegex(regex, contentBlock, callback) {
       start = matchArr.index
       callback(start, start + matchArr[0].length)
     }
+}
+
+const BoldSpan = (props) => {
+    const el = Children.map(props.children, (child, i) => {
+        return React.cloneElement(child, {
+            text : child.props.text.replace(/\*/g, '')
+        })
+    })
+    return (
+      <span
+        style={styles.bold}
+        data-offset-key={props.offsetKey}
+      >
+        {el}
+      </span>
+    )
 }
 
 const HandleSpan = (props) => {
@@ -143,6 +168,9 @@ const styles = {
       color: 'rgba(98, 177, 254, 1.0)',
       direction: 'ltr',
       unicodeBidi: 'bidi-override',
+    },
+    bold : {
+        fontWeight : 'bold'
     },
     hashtag: {
       color: 'rgba(95, 184, 138, 1.0)',
